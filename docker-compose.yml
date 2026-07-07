@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  # Database Service (PostgreSQL)
+  db:
+    image: postgres:15-alpine
+    container_name: archi-portal-db
+    restart: always
+    environment:
+      POSTGRES_DB: archi_portal
+      POSTGRES_USER: archi_admin
+      POSTGRES_PASSWORD: password_change_me_in_prod
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  # FastAPI Backend Service
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: archi-portal-backend
+    restart: always
+    environment:
+      - PORT=8000
+      - DOCS_DIR=/docs
+      - SECRET_KEY=super-secret-key-change-in-production
+      - DATABASE_URL=postgresql://archi_admin:password_change_me_in_prod@db:5432/archi_portal
+      # Azure Entra ID configuration placeholders
+      - AZURE_TENANT_ID=common
+      - AZURE_CLIENT_ID=
+      - AZURE_CLIENT_SECRET=
+      - AZURE_REDIRECT_URI=http://localhost:8000/api/auth/callback
+      - REQUIRED_ROLE_ARCHITECT=Architects
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./docs:/docs
+    depends_on:
+      - db
+
+  # Next.js Frontend Service
+  portal-web:
+    build:
+      context: ./portal-web
+      dockerfile: Dockerfile
+    container_name: archi-portal-frontend
+    restart: always
+    environment:
+      - PORT=3000
+      - NEXT_PUBLIC_API_BASE=http://localhost:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:

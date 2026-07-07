@@ -1,0 +1,11 @@
+{
+  "name": "archi-portal-workspace",
+  "version": "1.0.0",
+  "description": "Root workspace for Archi Portal",
+  "scripts": {
+    "install:all": "npm install --prefix portal-web && (cd backend && python3 -m venv venv && ./venv/bin/pip install -r requirements.txt)",
+    "dev:backend": "cd backend && ./venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload",
+    "dev:web": "npm run --prefix portal-web dev",
+    "dev": "npx -y concurrently -k -p \"[{name}]\" -n \"PY,WEB\" -c \"cyan,magenta\" \"npm run dev:backend\" \"npm run dev:web\""
+  }
+}

@@ -1,0 +1,126 @@
+{
+  "namespaces": [
+    {
+      "name": "Core",
+      "description": "Groupe de services Core."
+    },
+    {
+      "name": "Security",
+      "description": "Groupe de services Security."
+    },
+    {
+      "name": "ingress-nginx",
+      "description": "Groupe de services ingress-nginx.",
+      "isSystem": true
+    },
+    {
+      "name": "Billing",
+      "description": "Groupe de services Billing."
+    },
+    {
+      "name": "Registration",
+      "description": "Groupe de services Registration"
+    }
+  ],
+  "services": [
+    {
+      "id": "api-gateway",
+      "name": "API Gateway",
+      "namespace": "Core",
+      "type": "gateway",
+      "description": "Point d'entrée unique de l'ensemble du trafic client. Assure le routage, le throttling et la validation de clé d'API.",
+      "version": "1.5.2",
+      "status": "active"
+    },
+    {
+      "id": "auth-service",
+      "name": "Service d'Authentification",
+      "namespace": "Security",
+      "type": "aws-lambda",
+      "description": "Gère l'authentification des utilisateurs, la validation et le renouvellement des jetons JWT.",
+      "version": "2.0.1",
+      "status": "active"
+    },
+    {
+      "id": "payment-processor",
+      "name": "Processeur de Paiements",
+      "namespace": "Billing",
+      "type": "aws-lambda",
+      "description": "Exécute les transactions financières de manière asynchrone avec Stripe.",
+      "version": "1.1.0",
+      "status": "active"
+    },
+    {
+      "id": "user-database",
+      "name": "Base de Données Utilisateurs",
+      "namespace": "Security",
+      "type": "aws-rds",
+      "description": "Stocke les profils utilisateurs et leurs privilèges d'accès.",
+      "version": "Postgres 15.3",
+      "status": "active"
+    },
+    {
+      "id": "portal-dashboard",
+      "name": "Tableau de Bord Frontend",
+      "namespace": "Core",
+      "type": "browser",
+      "description": "Interface web utilisateur pour la consultation des rapports et de la cartographie.",
+      "version": "0.8.0",
+      "status": "active"
+    },
+    {
+      "id": "ingress-controller",
+      "name": "Ingress Controller NGINX",
+      "namespace": "ingress-nginx",
+      "type": "k8s-ingress",
+      "description": "Gère l'accès externe vers les services HTTP s'exécutant dans le cluster Kubernetes.",
+      "version": "1.8.0",
+      "status": "active"
+    },
+    {
+      "id": "billing-worker",
+      "name": "Billing Job",
+      "namespace": "Billing",
+      "type": "k8s-job",
+      "description": "Tâche planifiée de facturation mensuelle s'exécutant la nuit.",
+      "version": "0.2.1",
+      "status": "active"
+    },
+    {
+      "id": "registration-api",
+      "name": "registration-api",
+      "namespace": "Registration",
+      "type": "service",
+      "description": "",
+      "version": "1.0.0",
+      "status": "active"
+    }
+  ],
+  "connections": [
+    {
+      "from": "portal-dashboard",
+      "to": "api-gateway",
+      "label": "HTTPS"
+    },
+    {
+      "from": "api-gateway",
+      "to": "auth-service",
+      "label": "gRPC"
+    },
+    {
+      "from": "api-gateway",
+      "to": "payment-processor",
+      "label": "REST (Stripe)"
+    },
+    {
+      "from": "api-gateway",
+      "to": "ingress-controller",
+      "label": "HTTP"
+    },
+    {
+      "from": "auth-service",
+      "to": "user-database",
+      "label": "PostgreSQL"
+    }
+  ]
+}
