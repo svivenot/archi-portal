@@ -6,63 +6,63 @@
 [![PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL%2015-4169E1?style=for-the-badge&logo=postgresql)](https://www.postgresql.org/)
 [![MCP](https://img.shields.io/badge/Protocol-Model%20Context%20Protocol-8B5CF6?style=for-the-badge)](https://modelcontextprotocol.io/)
 
-**Archi Portal** est un référentiel collaboratif de documentation d'architecture logicielle conçu pour les équipes de développement et les architectes. Il structure, visualise et synchronise la documentation technique autour des standards **arc42**, des fiches de décisions **ADR (Architecture Decision Records)**, et des démarches de conception de l'**iSAQB**.
+**Archi Portal** is a collaborative software architecture documentation repository designed for developers and architects. It structures, visualizes, and synchronizes technical documentation based on the **arc42** template, **ADRs (Architecture Decision Records)**, and **iSAQB** design principles.
 
-Le portail supporte le **rendu en temps réel (Live Preview)**, la gestion d'accès SSO via **Azure Entra ID**, et l'édition assistée par IA via le protocole ouvert **MCP (Model Context Protocol)**.
-
----
-
-## 🌟 Fonctionnalités Clés
-
-* **📖 Documentation modulaire (arc42)** : Rédaction structurée en 12 chapitres (Buts de qualité, Contexte, Vues logiques, etc.) au format Markdown.
-* **⚡ Architecture Decision Records (ADRs)** : Gestion chronologique et indexation automatique des choix technologiques et de design.
-* **🗺️ Schéma Opérationnel Interactif** : Visualisation en temps réel de la cartographie des services et des flux (basée sur **React Flow** et le moteur d'auto-layout **Dagre**).
-* **🔄 Synchronisation Temps Réel** : Rechargement à chaud de la documentation et des schémas via des **WebSockets** locaux (`watchdog`).
-* **📥 Multi-Export de Documents** :
-  * **Markdown** : Export consolidé de tous les chapitres d'un projet en un unique fichier.
-  * **PDF Professionnel** : Exportation directe calibrée au format A4 portrait (794px à 96 DPI, marges de 15mm) sans distorsion ni troncature des tableaux et schémas.
-  * **Images PNG** : Capture haute définition du schéma d'architecture actuel.
-  * **Draw.io XML** : Exportation des diagrammes pour être éditables directement dans draw.io.
-* **🔒 Authentification SSO** : Intégration native avec **Azure Entra ID (OIDC)** et mode développement local simulé.
-* **🤖 Intégration IA (Serveur MCP)** : Permet à des agents intelligents (Claude Code, Cursor, etc.) de lire et d'éditer la documentation ou la cartographie de manière autonome.
+The portal supports **real-time rendering (Live Preview)**, SSO user access management via **Azure Entra ID**, and AI-assisted editing using the **MCP (Model Context Protocol)** open standard.
 
 ---
 
-## 📂 Structure du Projet
+## 🌟 Key Features
 
-* **[`/docs/`](./docs)** : Stockage persistant au format Markdown/JSON des projets et de la cartographie.
-* **[`/backend/`](./backend)** : API HTTP & WebSocket (**FastAPI en Python 3.11**). Héberge le serveur MCP, le File Watcher et la logique d'authentification.
-* **[`/portal-web/`](./portal-web)** : Portail utilisateur moderne (**Next.js 15 en TypeScript**) optimisé pour la lecture, la modélisation et l'export.
+* **📖 Modular Documentation (arc42)**: Structured drafting across 12 standard sections (Quality Goals, Context, Logical View, etc.) in Markdown format.
+* **⚡ Architecture Decision Records (ADRs)**: Chronological management and automatic indexing of design decisions and technology choices.
+* **🗺️ Interactive Operational Mapping**: Real-time visualization of service topologies and interaction flows (powered by **React Flow** and the **Dagre** auto-layout engine).
+* **🔄 Real-time Synchronization**: Hot-reloading of documents and diagrams via local **WebSockets** (`watchdog`).
+* **📥 Multi-Format Document Export**:
+  * **Markdown**: Consolidated export of all project sections into a single markdown file.
+  * **Professional PDF**: Direct A4 portrait PDF generation (mathematically calibrated to 794px at 96 DPI, with 15mm page margins) ensuring zero table or diagram clipping/overlap.
+  * **PNG Images**: High-definition snapshot captures of your active operational architecture diagram.
+  * **Draw.io XML**: Diagram exports ready to be opened and edited directly in Draw.io.
+* **🔒 SSO Authentication**: Native integration with **Azure Entra ID (OIDC)** and a mock local developer profile for sandbox testing.
+* **🤖 AI Integration (MCP Server)**: Enables intelligent agents (like Claude Code, Cursor, etc.) to browse, analyze, read, and write documentation or topology services autonomously.
 
 ---
 
-## 🚀 Démarrage avec Docker Compose (Recommandé)
+## 📂 Project Structure
 
-Docker Compose permet de lancer instantanément les trois composants de la solution (Frontend, Backend et la base de données PostgreSQL) dans un environnement isolé et prêt à l'emploi.
+* **[`/docs/`](./docs)**: Persistent storage for architecture projects (markdown files) and the operational topology mapping (json).
+* **[`/backend/`](./backend)**: API HTTP & WebSocket server (**FastAPI with Python 3.11**). Hosts the MCP server, file watcher daemon, and SSO callback authentication.
+* **[`/portal-web/`](./portal-web)**: Modern user portal (**Next.js 15 in TypeScript**) optimized for viewing, interactive modelling, and exporting.
 
-### 1. Lancement de la stack
-Exécutez la commande suivante à la racine du projet :
+---
+
+## 🚀 Running with Docker Compose (Recommended)
+
+Docker Compose allows you to launch the entire stack (Frontend, Backend, and PostgreSQL database) in an isolated, pre-configured sandbox.
+
+### 1. Build and launch the stack
+Run the following command in the project root directory:
 
 ```bash
 docker compose up --build
 ```
 
-### 2. Services disponibles
-* **Portail Web (Next.js)** : [http://localhost:3000](http://localhost:3000)
-* **API Backend (FastAPI)** : [http://localhost:8000](http://localhost:8000)
-* **Base de Données (PostgreSQL)** : Port `5432`
+### 2. Available Services
+* **Web Portal (Next.js)**: [http://localhost:3000](http://localhost:3000)
+* **Backend API (FastAPI)**: [http://localhost:8000](http://localhost:8000)
+* **Database (PostgreSQL)**: Port `5432`
 
-### 3. Persistance des données
-* Les documents Markdown et JSON de l'architecture sont montés sur votre machine hôte via le volume `./docs:/docs`. **Toute modification effectuée depuis le portail web est directement sauvegardée dans vos fichiers locaux**.
-* La base de données PostgreSQL conserve ses données de manière persistante via le volume Docker nommé `pgdata`.
+### 3. Data Persistence
+* The markdown documents and JSON topology mapping are mounted directly from your host machine via the `./docs:/docs` volume. **Any updates made from the web portal are saved directly to your local workspace files**.
+* The PostgreSQL database persists its tables and records locally via the named Docker volume `pgdata`.
 
 ---
 
-## 🛠️ Démarrage en Mode Développement Local (Sans Docker)
+## 🛠️ Running Locally for Development (Without Docker)
 
-Si vous souhaitez exécuter le projet en local pour du développement classique :
+If you prefer to run services manually for local development:
 
-### 1. Démarrer le Backend Python
+### 1. Start the Python FastAPI Backend
 ```bash
 cd backend
 python3 -m venv venv
@@ -71,69 +71,69 @@ pip install -r requirements.txt
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-### 2. Démarrer le Frontend Next.js
-Dans un autre terminal :
+### 2. Start the Next.js Frontend
+In a separate terminal window:
 ```bash
 cd portal-web
 npm install
 npm run dev
 ```
 
-*(Note : Un script d'aide dans le dossier racine permet de lancer le frontend et le backend simultanément en exécutant la commande `npm run dev` depuis la racine).*
+*(Note: A helper npm script in the root directory allows you to start both the backend and frontend simultaneously by running `npm run dev` in the root folder).*
 
 ---
 
 ## 🤖 Model Context Protocol (MCP)
 
-Le serveur **MCP** intégré permet à un assistant IA d'interagir directement avec votre référentiel d'architecture pour documenter les projets à votre place ou analyser la cartographie.
+The built-in **MCP** server empowers AI agents to read and write documentation, write ADRs, or manage system namespaces directly inside the repository.
 
-### Configuration du client (ex: Claude Code / Cursor / Claude Desktop)
+### Client Configuration (e.g. Claude Code / Cursor / Claude Desktop)
 
-Déclarez le serveur MCP dans votre configuration (ex. `mcp.json` ou `claude_desktop_config.json`) :
+Declare the MCP server in your client configuration file (e.g. `mcp.json` or `claude_desktop_config.json`):
 
 ```json
 {
   "mcpServers": {
     "archi-portal": {
-      "command": "/chemin/vers/votre/projet/backend/venv/bin/python3",
-      "args": ["/chemin/vers/votre/projet/backend/app/mcp_server.py"]
+      "command": "/path/to/your/project/backend/venv/bin/python3",
+      "args": ["/path/to/your/project/backend/app/mcp_server.py"]
     }
   }
 }
 ```
 
-### Liste des outils (Tools) exposés à l'IA :
-* **`list_projects`** : Liste tous les projets d'architecture.
-* **`list_documents`** : Obtient les chapitres arc42 et ADRs d'un projet.
-* **`read_document`** / **`write_document`** : Lit et modifie les fichiers Markdown de documentation.
-* **`update_arc42_section`** : Met à jour précisément un des 12 chapitres arc42.
-* **`create_adr`** : Génère une fiche ADR formalisée et l'inscrit dans le catalogue des décisions.
-* **`list_current_architecture`** : Récupère la cartographie opérationnelle (namespaces et services).
-* **`save_current_service`** / **`delete_current_service`** : Ajoute, édite ou retire un service applicatif du schéma de flux.
-* **`save_current_namespace`** / **`delete_current_namespace`** : Gère les groupes logiques/techniques de la cartographie.
-* **`freeze_documentation_version`** : Gèle l'état de travail actuel (DRAFT) du projet dans une version incrémentale.
+### Catalog of Exposed AI Tools:
+* **`list_projects`**: Lists all available architecture projects.
+* **`list_documents`**: Retrieves all arc42 chapters and ADR markdown files of a project.
+* **`read_document`** / **`write_document`**: Reads and writes specific markdown documentation files.
+* **`update_arc42_section`**: Modifies a specific arc42 chapter content.
+* **`create_adr`**: Formats and indexes a new Architecture Decision Record in the decisions log.
+* **`list_current_architecture`**: Exposes the active operational mapping (namespaces and services).
+* **`save_current_service`** / **`delete_current_service`**: Adds, updates, or removes an active service node.
+* **`save_current_namespace`** / **`delete_current_namespace`**: Manages logical namespace groupings in the topology mapping.
+* **`freeze_documentation_version`**: Freezes the current `DRAFT` state of a project into a read-only incremental release version.
 
 ---
 
-## 🗺️ Modéliser des Schémas d'Architecture
+## 🗺️ Modeling Architecture Diagrams
 
-Dans n'importe quel fichier Markdown de documentation, décrivez votre architecture logicielle dans un bloc de code YAML. Le portail le transformera automatiquement en un diagramme de flux interactif, stylisé et positionné par Dagre :
+To add operational flow diagrams in any of your project markdown files, insert a YAML block of type `architecture-diagram`. The portal will automatically parse it and render it as an interactive, styled, auto-positioned flow chart:
 
 ```yaml
 ```yaml type=architecture-diagram
 nodes:
   - id: client
     type: browser
-    label: "Navigateur Client"
+    label: "Client Browser"
   - id: gateway
     type: gateway
     label: "API Gateway"
   - id: service
     type: service
-    label: "Service Core"
+    label: "Core API"
   - id: db
     type: database
-    label: "PostgreSQL DB"
+    label: "PostgreSQL Database"
 edges:
   - from: client
     to: gateway
@@ -147,14 +147,14 @@ edges:
 ```
 ```
 
-### Types de Nœuds supportés :
-* `user` (Acteur)
-* `browser` (Interface Web)
-* `gateway` (Passerelle API)
-* `service` (Microservice / API)
-* `database` (Base de Données)
-* `queue` (File de messages / Broker)
-* `cache` (Cache Redis / Memcached)
-* `server` (Serveur / VM)
-* `third-party` (Service externe)
-* `system` (Système global)
+### Supported Node Types:
+* `user` (User actor)
+* `browser` (Web frontend / browser)
+* `gateway` (API Gateway)
+* `service` (Backend service / Microservice)
+* `database` (Database instances)
+* `queue` (Message Broker / Queue)
+* `cache` (Redis / Memcached memory store)
+* `server` (Server / VM instance)
+* `third-party` (External SaaS / API)
+* `system` (Global external system)
