@@ -83,7 +83,7 @@ jobs:
           cd backend
           source venv/bin/activate
           PYTHONPATH=. uvicorn app.main:app --host 0.0.0.0 --port 8000 &
-          npx wait-on http://localhost:8000/api/current-architecture --timeout 30000
+          npx wait-on http-get://localhost:8000/api/current-architecture --timeout 30000
 
       - name: Run Playwright E2E tests
         run: |
