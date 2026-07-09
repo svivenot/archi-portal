@@ -60,9 +60,8 @@ def get_current_user(request: Request) -> dict:
     
     # If Azure configuration is missing, allow a mock local developer session
     if not AZURE_CLIENT_ID or not AZURE_CLIENT_SECRET:
-        return {
-            "name": "Sylvain (Dev Mode)",
-            "email": "sylvain@local.dev",
+            "name": "Architecte (Dev Mode)",
+            "email": "architecte@local.dev",
             "roles": [REQUIRED_ROLE_ARCHITECT, "Admins"],
             "mock": True
         }

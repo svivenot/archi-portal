@@ -2,7 +2,7 @@
 
 * **Statut** : Accepté
 * **Date** : 2026-06-27
-* **Auteur** : Sylvain
+* **Auteur** : Architecte
 
 ## Contexte
 Nous voulons intégrer un outil d'édition de schémas d'architecture dynamique dans le portail **Archi Portal**. Mermaid.js est l'outil standard dans les dépôts Git, mais il offre peu de flexibilité sur la personnalisation visuelle des composants (icônes d'infrastructure, thèmes sophistiqués, interactivité complète) et le contrôle précis du positionnement automatique. Nous avons besoin d'un moteur permettant d'afficher des composants d'architecture stylisés et organisés automatiquement.

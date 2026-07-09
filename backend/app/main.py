@@ -108,8 +108,8 @@ async def auth_callback(code: str, response: Response):
     # Mock authentication handling
     if code == "mock-dev-code" or not AZURE_CLIENT_ID or not AZURE_CLIENT_SECRET:
         mock_user = {
-            "name": "Sylvain (Dev Mode)",
-            "email": "sylvain@local.dev",
+            "name": "Architecte (Dev Mode)",
+            "email": "architecte@local.dev",
             "roles": [REQUIRED_ROLE_ARCHITECT],
             "mock": True
         }
@@ -631,7 +631,7 @@ async def save_icons(
         raise HTTPException(status_code=500, detail=f"Erreur d'écriture: {str(e)}")
 
 # Path to current architecture file
-CURRENT_ARCH_FILE = Path("/Users/sylvain/archi_portal/docs/current_architecture.json")
+CURRENT_ARCH_FILE = Path(DOCS_DIR) / "current_architecture.json"
 
 # Default services payload to initialize if not exists
 DEFAULT_CURRENT_ARCH = {

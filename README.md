@@ -30,9 +30,9 @@ Le portail supporte le **rendu en temps réel (Live Preview)**, la gestion d'acc
 
 ## 📂 Structure du Projet
 
-* **[`/docs/`](file:///Users/sylvain/archi_portal/docs)** : Stockage persistant au format Markdown/JSON des projets et de la cartographie.
-* **[`/backend/`](file:///Users/sylvain/archi_portal/backend)** : API HTTP & WebSocket (**FastAPI en Python 3.11**). Héberge le serveur MCP, le File Watcher et la logique d'authentification.
-* **[`/portal-web/`](file:///Users/sylvain/archi_portal/portal-web)** : Portail utilisateur moderne (**Next.js 15 en TypeScript**) optimisé pour la lecture, la modélisation et l'export.
+* **[`/docs/`](./docs)** : Stockage persistant au format Markdown/JSON des projets et de la cartographie.
+* **[`/backend/`](./backend)** : API HTTP & WebSocket (**FastAPI en Python 3.11**). Héberge le serveur MCP, le File Watcher et la logique d'authentification.
+* **[`/portal-web/`](./portal-web)** : Portail utilisateur moderne (**Next.js 15 en TypeScript**) optimisé pour la lecture, la modélisation et l'export.
 
 ---
 
@@ -95,8 +95,8 @@ Déclarez le serveur MCP dans votre configuration (ex. `mcp.json` ou `claude_des
 {
   "mcpServers": {
     "archi-portal": {
-      "command": "/Users/sylvain/archi_portal/backend/venv/bin/python3",
-      "args": ["/Users/sylvain/archi_portal/backend/app/mcp_server.py"]
+      "command": "/chemin/vers/votre/projet/backend/venv/bin/python3",
+      "args": ["/chemin/vers/votre/projet/backend/app/mcp_server.py"]
     }
   }
 }
