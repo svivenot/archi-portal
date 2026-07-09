@@ -86,6 +86,92 @@ const isaqbHelpMap: Record<number, string> = {
   12: "Définissez les termes techniques et métier clés pour créer un langage commun (Ubiquitous Language) partagé par les développeurs, les architectes et le produit."
 };
 
+export const simpleMarkdownToHtml = (md: string): string => {
+  let html = md;
+  
+  // Minimal escape for rendering tags safely
+  html = html
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+
+  // Headings
+  html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+  html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
+  html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
+  html = html.replace(/^#### (.*$)/gim, '<h4>$1</h4>');
+
+  // Bold / Italics
+  html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+  html = html.replace(/__(.*?)__/g, '<strong>$1</strong>');
+  html = html.replace(/_(.*?)_/g, '<em>$1</em>');
+
+  // Rules
+  html = html.replace(/^---$/gim, '<hr/>');
+
+  // Code Blocks
+  html = html.replace(/```(mermaid|yaml type=architecture-diagram|yaml|json|javascript|typescript|bash|sh|markdown|html|css)?\n([\s\S]*?)\n```/g, (match, lang, code) => {
+    if (lang === 'mermaid') {
+      return `<div style="background: #f3f4f6; border-left: 4px solid #8b5cf6; padding: 12px; font-family: monospace; font-size: 10px; margin: 12px 0; white-space: pre-wrap;">[Diagramme Mermaid: Flowchart]\n${code}</div>`;
+    }
+    return `<pre style="background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; font-family: monospace; font-size: 11px; margin: 12px 0; overflow-x: auto; white-space: pre-wrap;"><code>${code}</code></pre>`;
+  });
+
+  // Inline code
+  html = html.replace(/`(.*?)`/g, '<code style="background: #f3f4f6; padding: 2px 4px; border-radius: 4px; font-family: monospace; font-size: 11px;">$1</code>');
+
+  // Blockquotes
+  html = html.replace(/^\> (.*$)/gim, '<blockquote style="border-left: 4px solid #d1d5db; padding-left: 12px; color: #6b7280; font-style: italic; margin: 12px 0;">$1</blockquote>');
+
+  // Bullet Lists
+  html = html.replace(/^\s*[\-\*]\s+(.*$)/gim, '<li>$1</li>');
+  
+  // Basic Markdown Tables support
+  const lines = html.split('\n');
+  let inTable = false;
+  let tableHtml = '';
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (line.startsWith('|') && line.endsWith('|')) {
+      if (line.includes('---')) {
+        continue;
+      }
+      const cols = line.split('|').slice(1, -1).map(c => c.trim());
+      if (!inTable) {
+        inTable = true;
+        tableHtml = '<table style="width:100%; border-collapse:collapse; margin:16px 0;"><thead><tr>';
+        cols.forEach(c => {
+          tableHtml += `<th style="border:1px solid #e5e7eb; padding:8px; background:#f9fafb; font-weight:600; text-align:left; font-size:11px;">${c}</th>`;
+        });
+        tableHtml += '</tr></thead><tbody>';
+      } else {
+        tableHtml += '<tr>';
+        cols.forEach(c => {
+          tableHtml += `<td style="border:1px solid #e5e7eb; padding:8px; font-size:11px;">${c}</td>`;
+        });
+        tableHtml += '</tr>';
+      }
+      lines[i] = '';
+    } else {
+      if (inTable) {
+        inTable = false;
+        tableHtml += '</tbody></table>';
+        lines[i] = tableHtml + '\n' + lines[i];
+      }
+    }
+  }
+  if (inTable) {
+    inTable = false;
+    tableHtml += '</tbody></table>';
+    lines[lines.length - 1] = tableHtml;
+  }
+  html = lines.join('\n');
+  html = html.replace(/\n\n/g, '<br/><br/>');
+
+  return html;
+};
+
 export default function Home() {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loadingAuth, setLoadingAuth] = useState<boolean>(true);
@@ -829,87 +915,6 @@ export default function Home() {
       console.error("Failed to consolidate project documentation:", err);
       alert("Erreur lors de l'exportation du dossier de documentation.");
     }
-  };
-
-  const simpleMarkdownToHtml = (md: string): string => {
-    let html = md;
-    
-    // Minimal escape for rendering tags safely
-    html = html
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;");
-  
-    // Headings
-    html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
-    html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
-    html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
-    html = html.replace(/^#### (.*$)/gim, '<h4>$1</h4>');
-  
-    // Bold / Italics
-    html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
-    html = html.replace(/__(.*?)__/g, '<strong>$1</strong>');
-    html = html.replace(/_(.*?)_/g, '<em>$1</em>');
-  
-    // Rules
-    html = html.replace(/^---$/gim, '<hr/>');
-  
-    // Code Blocks
-    html = html.replace(/```(mermaid|yaml type=architecture-diagram|yaml|json|javascript|typescript|bash|sh|markdown|html|css)?\n([\s\S]*?)\n```/g, (match, lang, code) => {
-      if (lang === 'mermaid') {
-        return `<div style="background: #f3f4f6; border-left: 4px solid #8b5cf6; padding: 12px; font-family: monospace; font-size: 10px; margin: 12px 0; white-space: pre-wrap;">[Diagramme Mermaid: Flowchart]\n${code}</div>`;
-      }
-      return `<pre style="background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; font-family: monospace; font-size: 11px; margin: 12px 0; overflow-x: auto; white-space: pre-wrap;"><code>${code}</code></pre>`;
-    });
-  
-    // Inline code
-    html = html.replace(/`(.*?)`/g, '<code style="background: #f3f4f6; padding: 2px 4px; border-radius: 4px; font-family: monospace; font-size: 11px;">$1</code>');
-  
-    // Blockquotes
-    html = html.replace(/^\> (.*$)/gim, '<blockquote style="border-left: 4px solid #d1d5db; padding-left: 12px; color: #6b7280; font-style: italic; margin: 12px 0;">$1</blockquote>');
-  
-    // Bullet Lists
-    html = html.replace(/^\s*[\-\*]\s+(.*$)/gim, '<li>$1</li>');
-    
-    // Basic Markdown Tables support
-    const lines = html.split('\n');
-    let inTable = false;
-    let tableHtml = '';
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i].trim();
-      if (line.startsWith('|') && line.endsWith('|')) {
-        if (line.includes('---')) {
-          continue;
-        }
-        const cols = line.split('|').slice(1, -1).map(c => c.trim());
-        if (!inTable) {
-          inTable = true;
-          tableHtml = '<table style="width:100%; border-collapse:collapse; margin:16px 0;"><thead><tr>';
-          cols.forEach(c => {
-            tableHtml += `<th style="border:1px solid #e5e7eb; padding:8px; background:#f9fafb; font-weight:600; text-align:left; font-size:11px;">${c}</th>`;
-          });
-          tableHtml += '</tr></thead><tbody>';
-        } else {
-          tableHtml += '<tr>';
-          cols.forEach(c => {
-            tableHtml += `<td style="border:1px solid #e5e7eb; padding:8px; font-size:11px;">${c}</td>`;
-          });
-          tableHtml += '</tr>';
-        }
-        lines[i] = '';
-      } else {
-        if (inTable) {
-          inTable = false;
-          tableHtml += '</tbody></table>';
-          lines[i] = tableHtml + '\n' + lines[i];
-        }
-      }
-    }
-    html = lines.join('\n');
-    html = html.replace(/\n\n/g, '<br/><br/>');
-  
-    return html;
   };
 
   const handleExportCurrentArchPdf = () => {
