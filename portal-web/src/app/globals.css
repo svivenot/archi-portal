@@ -238,6 +238,24 @@ body {
   height: 100%;
 }
 
+.workspace-body {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  height: calc(100% - 72px);
+  width: 100%;
+}
+
+.markdown-panel {
+  flex: 1;
+  height: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-primary);
+  padding: 40px;
+}
+
 .workspace-header {
   height: 72px;
   padding: 0 32px;
